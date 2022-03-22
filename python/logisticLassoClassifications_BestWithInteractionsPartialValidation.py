@@ -57,10 +57,10 @@ psa = np.array(df.PSA)
 psa[np.isnan(psa)] = np.nanmedian(psa)
 df.PSA = pd.Series(psa)
 
-#df.drop('MeasurableECE', inplace=True, axis=1)
+df.drop('MeasurableECE', inplace=True, axis=1)
 
-# toKeep = ['ECE_Pathology','GleasonBinary','CapsularContactLength','RetroprostaticAngleOblit','ProstateVolume']
-# df = df[toKeep]
+toKeep = ['ECE_Pathology','GleasonBinary','CapsularContactLength','RetroprostaticAngleOblit','ProstateVolume']
+df = df[toKeep]
 
 
 # MeasurableECE has good accuracy for positive cases, so just use MeasurableECE to predict positive cases and train a classifier to correct the
@@ -80,10 +80,10 @@ df.PSA = pd.Series(psa)
 # df['IrregularContour_CapsularContactLength'] = df['IrregularContour']*df['CapsularContactLength']
 
 # make all paired interactions
-# inputFeatures = df.drop('ECE_Pathology', axis=1).columns
-# for i in range(len(inputFeatures)):
-#     for j in range(i+1,len(inputFeatures)):
-#         df[inputFeatures[i] + ' x ' + inputFeatures[j]] = df[inputFeatures[i]]*df[inputFeatures[j]]
+inputFeatures = df.drop('ECE_Pathology', axis=1).columns
+for i in range(len(inputFeatures)):
+    for j in range(i+1,len(inputFeatures)):
+        df[inputFeatures[i] + ' x ' + inputFeatures[j]] = df[inputFeatures[i]]*df[inputFeatures[j]]
 
 y = np.array(df.ECE_Pathology)
 X = df.drop('ECE_Pathology', axis=1)
@@ -221,7 +221,7 @@ for estimator in [logisticScaledModel]: #randomForestModel]: #svmModel]: # # # #
     print('Accuracy (CV)    = \033[1m' + str(scores_accuracy_cv.round(3)) + '\033[0m') # + ' \u00B1 ' + str(np.std(scores).round(3)))
     print('F1       (CV)    = \033[1m' + str(np.mean(scores_f1).round(3)) + '\033[0m') # + ' \u00B1 ' + str(np.std(scores).round(3)))
 
-    coef = np.zeros((2+len(cv_result['estimator']), X.shape[1]))
+    coef = np.zeros((2+len(cv_result['estimator']), 10))
     for n, res in enumerate(cv_result['estimator']):
         if estimator is logisticModel:
             coef[n, :] = res.best_estimator_.coef_
