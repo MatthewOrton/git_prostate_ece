@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/morton/Documents/GitHub/prostate_ece_semantic/jupyter/mlruns/1/6f169da0324243ce92e0c8c9bb5d761c/artifacts
+end_time: 1652696871105
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: 6f169da0324243ce92e0c8c9bb5d761c
+run_uuid: 6f169da0324243ce92e0c8c9bb5d761c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1652696261894
+status: 3
+tags: []
+user_id: morton

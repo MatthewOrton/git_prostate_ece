@@ -1,0 +1,4 @@
+artifact_location: file:///Users/morton/Documents/GitHub/prostate_ece_semantic/jupyter/mlruns/1
+experiment_id: '1'
+lifecycle_stage: active
+name: Semantic Model ECE
