@@ -26,7 +26,8 @@ project["inputPath"] = os.path.join(projectFolder, 'XNAT', 'experiments')
 project["assessorStyle"] = {"type": "seg", "format": "dcm"}
 project["roiObjectLabelFilter"] = ''
 project["paramFileName"] =  os.path.join(projectFolder, 'Params.yaml')
-project["outputPath"] = os.path.join(projectFolder, 'XNAT', 'extractions', 'radiomicFeatures__' + strftime("%Y%m%d%H%M", localtime()))
+outputFolder = 'radiomicFeatures__' + strftime("%Y%m%d%H%M", localtime())
+project["outputPath"] = os.path.join(projectFolder, 'XNAT', 'extractions', outputFolder)
 
 # copy all code including this file - N.B. add any more local modules to list if needed
 os.makedirs(os.path.join(project["outputPath"],'code'))
@@ -215,7 +216,7 @@ if len(resultsFiles)>0:
             s = fo.readlines()
             csvList.append(s[1])
     # write combined .csv
-    with open(os.path.join(project["outputPath"],'radiomicFeatures','radiomicFeatures.csv'), 'w') as file_handler:
+    with open(os.path.join(project["outputPath"],'radiomicFeatures',outputFolder+'.csv'), 'w') as file_handler:
         for item in csvList:
             file_handler.write("{}".format(item))
     print('')
