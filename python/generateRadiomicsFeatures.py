@@ -5,7 +5,7 @@ import os, glob
 from getSopInstDict import getSopInstDict
 from radiomicAnalyser import radiomicAnalyser
 from subprocess import call
-import sys, traceback
+import sys, traceback, shutil, inspect
 import pygit2
 import cv2
 import matplotlib.pyplot as plt
@@ -27,6 +27,14 @@ project["assessorStyle"] = {"type": "seg", "format": "dcm"}
 project["roiObjectLabelFilter"] = ''
 project["paramFileName"] =  os.path.join(projectFolder, 'Params.yaml')
 project["outputPath"] = os.path.join(projectFolder, 'XNAT', 'extractions', 'radiomicFeatures__' + strftime("%Y%m%d%H%M", localtime()))
+
+# copy all code including this file - N.B. add any more local modules to list if needed
+os.makedirs(os.path.join(project["outputPath"],'code'))
+modulesToCopy = [getSopInstDict, radiomicAnalyser]
+[shutil.copyfile(inspect.getfile(x), os.path.join(project['outputPath'], 'code', os.path.split(inspect.getfile(x))[1])) for x in modulesToCopy]
+shutil.copyfile(__file__, os.path.join(project["outputPath"], 'code', os.path.split(__file__)[1]))
+shutil.copyfile(project["paramFileName"], os.path.join(project["outputPath"], 'code', os.path.split(project["paramFileName"])[1]))
+
 
 patientFolders = glob.glob(os.path.join(project["inputPath"], 'IAP_*'))
 patientFolders.sort()
@@ -98,7 +106,18 @@ for patientFolder in patientFolders:
                 if radAn.roiObjectLabelFound=='Repro':
                     radAn.StudyPatientName += '_repro'
 
-                radAn.computeRadiomicFeatures()
+                # no normalization
+                radAn.computeRadiomicFeatures(normalize=False, featureKeyPrefixStr='noNormalize_')
+
+                # with normalization of whole image
+                radAn.computeRadiomicFeatures(normalize=True, featureKeyPrefixStr='normalized_')
+
+                # normalization only to mask
+                maskMean = np.mean(radAn.imageData['imageVolume'][radAn.mask==1])
+                maskStd = np.std(radAn.imageData['imageVolume'][radAn.mask == 1])
+                radAn.imageData['imageVolume'] = (radAn.imageData['imageVolume'] - maskMean)/maskStd
+                radAn.computeRadiomicFeatures(normalize=False, featureKeyPrefixStr='maskNormalize_')
+
                 resultsFiles.append(radAn.saveResult(fileSubscript=patientID))
 
                 if False:
@@ -154,7 +173,18 @@ for patientFolder in patientFolders:
             radAn.imageData['imageVolume'] = radAn.imageData['imageVolume'][minSliceIdx:maxSliceIdx, :, :]
             radAn.mask = radAn.mask[minSliceIdx:maxSliceIdx, :, :]
 
-            radAn.computeRadiomicFeatures()
+            # no normalization
+            radAn.computeRadiomicFeatures(normalize=False, featureKeyPrefixStr='noNormalize_')
+
+            # with normalization of whole image
+            radAn.computeRadiomicFeatures(normalize=True, featureKeyPrefixStr='normalized_')
+
+            # normalization only to mask
+            maskMean = np.mean(radAn.imageData['imageVolume'][radAn.mask == 1])
+            maskStd = np.std(radAn.imageData['imageVolume'][radAn.mask == 1])
+            radAn.imageData['imageVolume'] = (radAn.imageData['imageVolume'] - maskMean) / maskStd
+            radAn.computeRadiomicFeatures(normalize=False, featureKeyPrefixStr='maskNormalize_')
+
             resultsFiles.append(radAn.saveResult(fileSubscript=patientID))
 
             if False:
