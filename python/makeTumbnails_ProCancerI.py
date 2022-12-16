@@ -29,28 +29,27 @@ for assessor in assessors:
 
         data = dataLoader(assessor, seriesFolderDict, maxNonCompatibleInstances=maxNonCompatibleInstances)
 
-        # if not any(data.seriesData):
-        #     continue
-
-        if len(data.seriesData['ROINames'])==1:
+        # some are named 'Index_lesion' and some 'Index_lesion '
+        if len(data.seriesData['ROINames'])==1 and 'Index_lesion' in data.seriesData['ROINames'][0]:
             roiName = data.seriesData['ROINames'][0]
-            thisLesion = data.getNamedROI(roiName, sliceSpacingUniformityThreshold=0.005)
+        else:
+            print('No ROI called "Index_lesion" found!')
+            continue
 
-            titleStr = str(rts.PatientName)
-            if not thisLesion['maskContiguous']:
-                titleStr += '\n' + r'$\bf{WARNING}$: contains volumes with missing slices'
-                assessorsWithWarnings.append(assessor)
-            else:
-                titleStr += '\n '
+        thisLesion = data.getNamedROI(roiName, sliceSpacingUniformityThreshold=0.005)
 
+        titleStr = os.path.split(assessor)[1].split('__II__')[0]
+        if not thisLesion['maskContiguous']:
+            titleStr += '\n' + r'$\bf{WARNING}$: contains volumes with missing slices'
+            assessorsWithWarnings.append(assessor)
+        else:
+            titleStr += '\n '
 
-        imageFilesUsed = saveThumbnail([thisLesion], thumbnailFile, volumePad=[5, 20, 20], titleStr=titleStr)
+        thumbnailFile = assessor.replace('assessors', 'Thumbnails').replace('.dcm','.pdf')
 
-        # list all files in the same image folder and delete any that are not used
-        allImageFiles = glob.glob(os.path.join(os.path.split(imageFilesUsed[0])[0], '*.dcm'))
-        imageFilesNotUsed = list(set(allImageFiles) - set(imageFilesUsed))
-        for file in imageFilesNotUsed:
-            os.remove(file)
+        saveThumbnail([thisLesion], thumbnailFile, volumePad=[2, 50, 50], imageGrayLevelLimits=[0, 1000], titleStr=titleStr)
+
+        print('\n')
 
     except:
         print('\033[1;31;48m'+'_'*50)
