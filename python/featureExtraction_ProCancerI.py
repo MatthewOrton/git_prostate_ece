@@ -5,7 +5,7 @@ import numpy as np
 import pydicom
 from time import strftime, localtime
 
-# code I've written
+# modules/functions I've written
 from getSeriesUIDFolderDict import getSeriesUIDFolderDict
 from radiomicAnalyser2 import radiomicAnalyser2, saveThumbnail
 
