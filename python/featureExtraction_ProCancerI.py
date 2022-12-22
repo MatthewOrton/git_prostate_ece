@@ -82,7 +82,10 @@ for assessor in assessors:
 
         # save thumbnail file
         thumbnailFile = os.path.join(outputFolder, 'thumbnails', 'thumbnail__' + os.path.split(assessor)[1].replace('.dcm', '.pdf'))
-        saveThumbnail(roiList, thumbnailFile, volumePad=[2, 50, 50], imageGrayLevelLimits=[0, 1000], titleStr=patID+titleStr)
+        saveThumbnail(roiList,
+                      thumbnailFile,
+                      volumePad=[2, 50, 50],
+                      titleStr=patID+titleStr)
         thumbnailFileList.append(thumbnailFile)
 
         print('\n')
