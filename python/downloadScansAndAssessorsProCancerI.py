@@ -20,4 +20,4 @@ xu = xnatDownloader(serverURL = serverURL,
                     roiCollectionLabelFilter=roiCollectionLabelFilter)
 
 xu.downloadAssessors_Project(destinFolder='assessors')
-xu.downloadImagesReferencedByAssessors(keepEntireScan=True)
+#xu.downloadImagesReferencedByAssessors(keepEntireScan=True)
